@@ -1,0 +1,208 @@
+/*
+   ----------------------------- UNIVERSIDAD TÉCNICA DEL NORTE --------------------------
+   --------------------- CARRERA DE INGENIERÍA EN TELECOMUNICACIONES --------------------
+   --------------------------------- SISTEMAS EMBEBIDOS ---------------------------------
+
+   +++++++++++++++++++++++++++++++++++ LABORATORIO N°2 ++++++++++++++++++++++++++++++++++
+   +++++++++++++++++++++++++++++++++++++ CON TECLADO ++++++++++++++++++++++++++++++++++++
+
+  ////////////////////////////////-GRUPO 5 - INTEGRANTES-////////////////////////////////
+  ************************************Diego Montezuma************************************
+  *************************************Jonathan Lopez************************************
+  ***********************************Alfonsina Chamorro**********************************
+  *************************************Jose Bustillos************************************
+  ///////////////////////////////////////////////////////////////////////////////////////
+*/
+
+#include <LiquidCrystal.h>;
+#include <Keypad.h>;
+LiquidCrystal lcd(13, 12, 11, 10, 9, 8); // pines definidos para lcd
+const byte r = 4; // numero de filas
+const byte c = 4; // numero de columnas
+const int btn = A0; // pin de boton
+char tm [r][c] = { // Distribucion de matriz
+  {'1', '2', '3', 'a'},
+  {'4', '5', '6', 'b'},
+  {'7', '8', '9', 'c'},
+  {'j', '0', 'm', 'd'}
+};
+
+byte pinR[r] = {7, 6, 5, 4}; // pines para filas
+byte pinC [c] = {3, 2, A3, A4}; // pines para columnas
+Keypad keypad = Keypad(makeKeymap(tm), pinR, pinC, r, c); // definicion del teclado
+char psswd[10]; // Tamaño de vector
+char psswdJ[10] = "dm09101995"; // clave para Diego Montezuma
+char psswdD[10] = "ac06051998"; // clave para Alfonsina Chamorro
+char psswdC[10] = "jj09032000"; // clave para Jonathan Lopez
+char psswdM[10] = "bj01091998"; // clave Jose Bustillos
+byte caracter = 0; // Variable para contar caracteres
+int i = 0;
+int j = 0;
+char dato; // variable dato
+int countJ = 0; //Registro de Diego Montezuma
+int countD = 0; //Registro de Alfonsina Chamorro
+int countC = 0; //Registro de Jonathan Lopez
+int countM = 0; //Registro de Jose Bustillos
+
+void setup() {
+  
+  pinMode(btn,INPUT); // definir pin A0 como entrada
+  Serial.begin(9600); // inicio de terminal serial
+  Serial.println("REGISTRO DE INGRESOS"); // dimensiones terminal serial
+  Serial.println(" "); // borrar terminal
+
+  lcd.begin(16, 2); // dimensiones lcd
+  lcd.setCursor(0, 0); // posicion
+  lcd.print("   BIENVENIDO"); // imprimir mensaje
+  lcd.setCursor(0, 1); // posicion
+  lcd.print("Ingrese su clave: "); // imprimir mensaje
+  delay(2000); // pausa visualizacion
+  lcd.clear(); // limpiar lcd
+  
+}
+          
+void loop() {
+
+  char dato = keypad.getKey(); // funcion para teclado 
+
+  if (dato != NO_KEY) // condicion if para toma de valores
+  {
+    lcd.print('*'); // se ve el dato como un aterisco
+    psswd[caracter] = dato; // almacena el caracter
+    caracter++; // aumenta el caracter al array
+  }
+
+
+  if (caracter == 10) // condicion if para cantidad de datos de cada clave
+  {
+    byte checkJ = 0; // contador para Diego Montezuma
+    byte checkD = 0; // contador para Alfonsina Chamorro
+    byte checkC = 0; // contador para Jonathan Lopez
+    byte checkM = 0; // contador para Jose Bustillos
+
+ for(int i=0;i<1;i++){ // RESTRICCION: AL INGRESAR 0 EN EL PRIMER DIGITO BLOQUEARA EL SISTEMA
+    if(psswd[i]=='0'){ // condicion if para ingreso de caracter asterisco 0
+      lcd.clear(); // limpiar lcd
+      for(j = 0; j < 60; j++) { // ciclor for para contador j               
+      lcd.scrollDisplayLeft(); // desplazamiento hacia la izquierda
+      lcd.setCursor(1,0); // posicion
+      lcd.print("SISTEMA BLOQUEADO - REINICIE !!!!"); // imprimir mensaje
+      delay(100); // pausa de visualizacion
+    }
+    lcd.clear(); // limpiar lcd
+    lcd.setCursor(0,0); // posicon
+    lcd.println("     SISTEMA"); // limpiar pantalla
+    lcd.setCursor(0,1); // posicion
+    lcd.println("   BLOQUEADO"); // limpiar pantalla
+    exit(0); // pausa de todo el sistema
+    }  
+    
+  }
+
+
+    for (i = 0; i < 10; i++) // ciclo for comparacion de claves
+    {
+      if (psswd[i] == psswdJ[i]) // Comprobaciom de clave a Diego Montezuma
+      {
+        checkJ++;
+      }
+      if (psswd[i] == psswdD[i]) // Comprobaciom de clave a Alfonsina chamorro
+      {
+        checkD++;
+      }
+      if (psswd[i] == psswdC[i]) // Comprobaciom de clave a Jonathan lopez
+      {
+        checkC++;
+      }
+      if (psswd[i] == psswdM[i]) // Comprobaciom de clave a Jose bustillos
+      {
+        checkM++;
+      }
+    }
+
+    if (checkJ == 10) // condicion if para comparar claves
+    {
+      lcd.setCursor(0, 0); // posicion
+      lcd.print("ACCESO CORRECTO - BIENVENIDO"); // imprimir en pantalla
+      lcd.setCursor(1, 1); // posicion
+      lcd.print("DIEGO MONTEZUMA"); // imprimir en pantalla
+
+      countJ = 1; // registro de ingreso de usuario
+    }
+
+    if (checkD == 10) // condicion if para comparar claves
+    {
+
+      lcd.setCursor(0, 0); // posicion
+      lcd.print("ACCESO CORRECTO - BIENVENIDA"); // imprimir en pantalla
+      lcd.setCursor(1, 1); // posicion
+      lcd.print("ALFONSINA CHAMORRO"); // imprimir en pantalla
+
+      countD = 1; // registro de ingreso de usuario
+    }
+
+    if (checkC == 10) // condicion if para comparar claves
+    {
+      lcd.setCursor(0, 0); // posicion
+      lcd.print("ACCESO CORRECTO - BIENVENIDO"); // imprimir en pantalla
+      lcd.setCursor(1, 1); // posicion
+      lcd.print("JONATHAN LOPEZ"); // imprimir en pantalla
+
+      countC = 1; // registro de ingreso de usuario
+    }
+
+    if (checkM == 10) // condicion if para comparar claves
+    {
+      lcd.setCursor(0, 0); // posicion
+      lcd.print("ACCESO CORRECTO - BIENVENIDO"); // imprimir en pantalla
+      lcd.setCursor(1, 1); // posicion
+      lcd.print("JOSE BUSTILLOS"); // imprimir en pantalla
+
+      countM = 1; // registro de ingreso de usuario
+    }
+
+    if (checkJ == 10 || checkD == 10 || checkC == 10 || checkM == 10) // condicion if para comprobar contraseñas mal ingresadas
+    {
+    } else {
+
+      lcd.setCursor(1, 1); // posicion
+      lcd.println("INTENTE DE NUEVO"); // imprimir en pantalla
+      lcd.setCursor(1, 0); // posicion
+      lcd.print("ACCESO DENEGADO"); // imprimir en pantalla
+    }
+    caracter = 0; // reinicia datos a 0
+    for (j = 0; j < 18; j++) // ciclo for para auto desplazamiento
+    {
+      lcd.setCursor(20,1); // posicion                
+      lcd.scrollDisplayLeft(); // inicia auto desplazamiento
+      lcd.print(" "); // limpiar caracteres
+      delay(150); // pausa de visualizacion
+    }
+    lcd.clear(); // limpiar pantalla                           
+  }
+  
+
+  if (digitalRead(btn) == HIGH) { // condicion if para leer el boton
+    delay(400); // delay anti rebotes
+    if (countJ == 1) { // condicion if para ingreso
+      Serial.println(" SI - INGRESO DIEGO MONTEZUMA"); // impresion de resultados de ingreso
+    } else {
+      Serial.println(" NO - INGRESO DIEGO MONTEZUMA"); // impresion de resultados de no ingreso
+    }
+    if (countD == 1) { // condicion if para ingreso
+      Serial.println(" SI - INGRESO ALFONSINA CHAMORRO"); // impresion de resultados de ingreso
+    } else {
+      Serial.println(" NO - INGRESO ALFONSINA CHAMORRO"); // impresion de resultados de no ingreso
+    }
+    if (countC == 1) { // condicion if para ingreso
+      Serial.println(" SI - INGRESO JONATHAN LOPEZ"); // impresion de resultados de ingreso
+    } else {
+      Serial.println(" NO - INGRESO JONATHAN LOPEZ"); // impresion de resultados de no ingreso
+    }
+    if (countC == 1) { // condicion if para ingreso
+      Serial.println(" SI - INGRESO JOSE BUSTILLOS"); // impresion de resultados de ingreso
+    } else {
+      Serial.println(" NO - INGRESO JOSE BUSTILLOS"); // impresion de resultados de no ingreso
+    }                                                                        
+  }
+}
