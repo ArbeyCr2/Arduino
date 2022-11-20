@@ -1,0 +1,154 @@
+/*
+   ----------------------------- UNIVERSIDAD TÉCNICA DEL NORTE --------------------------
+   --------------------- CARRERA DE INGENIERÍA EN TELECOMUNICACIONES --------------------
+   --------------------------------- SISTEMAS EMBEBIDOS ---------------------------------
+
+   +++++++++++++++++++++++++++++++++++ LABORATORIO N°2 ++++++++++++++++++++++++++++++++++
+ 
+   +++++++++++++++++++++++++++++++++++++ SIN TECLADO ++++++++++++++++++++++++++++++++++++
+
+  ////////////////////////////////-GRUPO 5 - INTEGRANTES-////////////////////////////////
+  ************************************Diego Montezuma************************************
+  *************************************Jonathan Lopez************************************
+  ***********************************Alfonsina Chamorro**********************************
+  *************************************Jose Bustillos************************************
+  ///////////////////////////////////////////////////////////////////////////////////////
+*/
+
+#include<LiquidCrystal.h>;
+String cd1="dm09101995"; //Variable que guarda la clave de Diego Montezuma
+String cd2="ac06051998"; //Variable que guarda la clave de Alfonsina Chamorro
+String cd3="jl09032000"; //Variable que guarda la clave de Jonathan Flores
+String cd4="bj01091998"; //Variable que guarda la clave de Jose Bustillos
+String alm; //donde se almacena el ingreso de dato
+String n1 = "Bienvenido Diego Montezuma"; //mensaje de bienvenida
+String n2 = "Bienvenido Chamorro Alfonsina"; //mensaje de bienvenida
+String n3 = "Bienvenida Lopez Flores"; //mensaje de bienvenida
+String n4 = "Bienvenido Bustillos Jorge"; //mensaje de bienvenida
+String n5 = "Usiario incorrecto"; //mensaje de bienvenida
+int i = 0; //Variable utilizada para ciclos for.
+String compr1,compr2,compr3,compr4; //Variable que guarda la lista de ingreso
+int com1=0,com2=0,com3=0,com4=0; //Guarda el dato de activacion de registro
+const int rs=13,en=12,d4=11,d5=10,d6=9,d7=8; //variable para los pines de la pantalla LCD
+int bt=7, c=6; //Variable para pines de boton y led
+LiquidCrystal lcd(rs,en,d4,d5,d6,d7); //Establece la conexion de pines de LCD a arduino
+
+void setup() {
+  pinMode(bt, INPUT); //Pin de boton se establece en entrada
+  pinMode(c, OUTPUT); //Pin led se establece en saldia
+  pinMode(5,OUTPUT); //Pin de led 2 se establece en salida
+  Serial.begin(9600); //Velocidad de comunicacion serial 9600 baudios
+  Serial.println("INGRESE CREDENCIALES"); //Mensaje de impresion de inicio en LCD
+  lcd.begin(16,2); //Inicia LCD en numero de columnas y filas
+}
+
+void loop() {
+  if(Serial.available()>0){ //Verifica si hay caractere ingresados
+    alm=Serial.readString(); //Almacena los caracteres en la variable alm
+    if(alm==cd1){ //Compara la variable alm con la contraseña guardada
+      com1=1; //asigna el valor 1 a la variable com1
+      Serial.println("Bienvenido: Diego Montezuma"); //Imprime en la pantalla lo descrito
+      digitalWrite(c,HIGH); //Enciende el led en el pin 6
+      delay(200); //espera un tiempo con el led encendido
+      digitalWrite(c,LOW); //apaga el led en el pin 6
+      for(i=17;i>=-10;i--){ //Ciclo for que inicia el recorrido de string en LCD
+        lcd.clear(); //Limpia el LCD
+        lcd.setCursor(i, 1); //Posiciona el cursor de LCD en 1
+        lcd.print(n1); //Imprime el mensaje de bienvenida en LCD
+        delay(100); //Tiempo de espera por cada caracter
+      }
+    }
+    else if(alm==cd2){
+      com2=1;
+      Serial.println("Bienvenido: Chamorro Alfonsina");
+      digitalWrite(c,HIGH);
+      delay(200);
+      digitalWrite(c,LOW);
+      for(i=17;i>=-10;i--){
+        lcd.clear();
+        lcd.setCursor(i, 1);
+        lcd.print(n2);
+        delay(100);
+      }      
+    }
+    else if(alm==cd3){
+      com3=1;
+      Serial.println("Bienvenido: Lopez Flores");
+      digitalWrite(c,HIGH);
+      delay(200);
+      digitalWrite(c,LOW);
+      for(i=17;i>=-10;i--){
+        lcd.clear();
+        lcd.setCursor(i, 1);
+        lcd.print(n3);
+        delay(100);
+      }      
+    }   
+    else if(alm==cd4){
+      com4=1;
+      Serial.println("Bienvenido: Bustillos Jorge");
+      digitalWrite(c,HIGH);
+      delay(200);
+      digitalWrite(c,LOW);
+      for(i=19;i>=-10;i--){
+        lcd.clear();
+        lcd.setCursor(i, 1);
+        lcd.print(n4);
+        delay(100);
+      }      
+    }   
+  else{
+    Serial.println("Usuario Incorrecto."); //impresion de mensaje
+    digitalWrite(5, HIGH); //Encendido de led pin 5
+    delay(200); //Led encendido a la espera
+    digitalWrite(5,LOW); //Apagado de led pin 5
+    for(i=12;i>=-10;i--){ //Bucle de recorrido de string en LCD
+      lcd.clear(); //Limpia el LCD
+      lcd.setCursor(i, 1); //Posiciona el cursor de LCD en 1
+      lcd.print(n5); //Imprime el mensaje de usuario incorrecto
+      delay(100); //Tiempo de espera por cada caracter
+    }
+  }
+  if(digitalRead(bt)==LOW){
+    delay(250);
+    Serial.println(" ");
+    Serial.println(" REGISTRO DE ASISTENTES ");
+    
+    if(com1==1)
+    {
+      compr1="Usuario Diego Montezuma ingresa";
+      com1=0;
+    }
+    else
+      compr1="Usuario Diego Montezuma no ingresa";
+    if(com2==1)
+    {
+      compr2="Usuario Chamorro Alfonsina ingresa";
+      com2=0;
+    }
+    else
+      compr2="Usuario Chamorro Alfonsina no ingresa";
+    if(com3==1)
+    {
+      compr3="Usuario Lopez Flores ingresa";
+      com3=0;
+    }
+    else
+      compr3="Usuario Lopez Flores no ingresa";
+    if(com4==1)
+    {
+      compr4="Usuario Bustillos Jorge ingresa";
+      com4=0;
+    }
+    else
+      compr4="Usuario Bustillos Jorge no ingresa";
+
+    Serial.println(" ");
+    Serial.println(compr1);
+    Serial.println(compr2);
+    Serial.println(compr3);
+    Serial.println(compr4);
+  }
+}
+
+}
